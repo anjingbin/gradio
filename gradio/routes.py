@@ -522,11 +522,6 @@ class App(FastAPI):
                 fn_index = inferred_fn_index
                 print("api_name:", api_name)
                 print("fn_index:", fn_index)
-                
-            if not (blocks.is_callable(fn_index)):
-                raise ValueError(
-                    "This function is not callable because it is either stateful or is a generator. Please use the .launch() method instead to create an interactive user interface."
-                )
 
             session_info["fn_index"] = fn_index
 
