@@ -44,7 +44,7 @@ from gradio import utils
 from gradio.context import Context
 from gradio.data_classes import PredictBody, ResetBody
 from gradio.documentation import document, set_documentation_group
-from gradio.exceptions import Error
+from gradio.exceptions import Error, InvalidApiName
 from gradio.helpers import EventData
 from gradio.processing_utils import TempFileManager
 from gradio.queueing import Estimation, Event
@@ -504,6 +504,31 @@ class App(FastAPI):
                 )
             except AsyncTimeOutError:
                 return
+
+            api_name = session_info.get("api_name")
+            fn_index = session_info.get("fn_index")
+
+            if api_name is not None:
+                inferred_fn_index = next(
+                    (
+                        i
+                        for i, d in enumerate(blocks.dependencies)
+                        if d.get("api_name") == api_name
+                    ),
+                    None,
+                )
+                if inferred_fn_index is None:
+                    raise InvalidApiName(f"Cannot find a function with api_name {api_name}")
+                fn_index = inferred_fn_index
+                print("api_name:", api_name)
+                print("fn_index:", fn_index)
+                
+            if not (blocks.is_callable(fn_index)):
+                raise ValueError(
+                    "This function is not callable because it is either stateful or is a generator. Please use the .launch() method instead to create an interactive user interface."
+                )
+
+            session_info["fn_index"] = fn_index
 
             event = Event(
                 websocket, session_info["session_hash"], session_info["fn_index"]

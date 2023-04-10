@@ -330,9 +330,16 @@ class Queue:
                 if event.data
             ]
             data.batched = True
+
+        api_name = None
+        if data.api_name is None:
+            api_name = "predict"
+        else:
+            api_name = data.api_name
+
         response = await AsyncRequest(
             method=AsyncRequest.Method.POST,
-            url=f"{self.server_path}api/predict",
+            url=f"{self.server_path}api/{api_name}",
             json=dict(data),
             headers={"Authorization": f"Bearer {self.access_token}"},
             cookies={"access-token": token} if token is not None else None,

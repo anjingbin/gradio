@@ -12,6 +12,7 @@ class PredictBody(BaseModel):
     data: List[Any]
     event_data: Optional[Any]
     fn_index: Optional[int]
+    api_name: Optional[str]
     batched: Optional[
         bool
     ] = False  # Whether the data is a batch of samples (i.e. called from the queue if batch=True) or a single sample (i.e. called from the UI)

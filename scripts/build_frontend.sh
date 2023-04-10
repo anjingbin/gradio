@@ -7,5 +7,5 @@ pnpm_required
 
 echo "Building the frontend..."
 cd ui
-pnpm i --frozen-lockfile
+pnpm i --no-frozen-lockfile
 pnpm build
